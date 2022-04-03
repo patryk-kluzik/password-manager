@@ -21,20 +21,30 @@ def save_password():
         password
     ]
 
-    data_name = ["website", "email/username", "password"]
+    data_name = [
+        "website",
+        "email/username",
+        "password"
+    ]
 
     index = 0
     fields_filled = 0
 
+    # loop through the fields and display info message for the empty field
+    # if field isn't empty, then increment field filled by 1
     for field in data:
         if field == '':
             messagebox.showinfo(title="Oops", message=f"The {data_name[index]} field is empty")
         else:
             fields_filled += 1
-
         index += 1
 
-    if fields_filled == 3:
+    # bool to see if all entries are filled
+    validated_entries = fields_filled == 3
+
+    if validated_entries:
+
+        # confirm with user entered details
         is_ok = messagebox.askokcancel(title=website, message=f"Confirm your detail: \n"
                                                               f"Email: {email}\n"
                                                               f"Password: {password}")
