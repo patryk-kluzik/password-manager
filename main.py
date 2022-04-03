@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 
 
 # some constants
@@ -14,23 +15,57 @@ def save_password():
     email = email_entry.get()
     password = password_entry.get()
 
-    data = [website, email, password]
+    data = [
+        website,
+        email,
+        password
+    ]
 
-    line_to_append = ' | '.join(data)
+    data_name = ["website", "email/username", "password"]
 
-    with open("password_data.txt", "a") as password_file:
-        password_file.write(line_to_append + "\n")
+    index = 0
+    fields_filled = 0
+
+    for field in data:
+        if field == '':
+            messagebox.showinfo(title="Oops", message=f"The {data_name[index]} field is empty")
+        else:
+            fields_filled += 1
+
+        index += 1
+
+    if fields_filled == 3:
+        is_ok = messagebox.askokcancel(title=website, message=f"Confirm your detail: \n"
+                                                              f"Email: {email}\n"
+                                                              f"Password: {password}")
+
+        # create a string delimited by the pipe symbol
+        line_to_append = ' | '.join(data)
+
+        if is_ok:
+            # open the file and append the new line, create a new line
+            with open("password_data.txt", "a") as password_file:
+                password_file.write(line_to_append + "\n")
+
+            # call delete method to clear the entry box
+            website_entry.delete(0, END)
+            password_entry.delete(0, END)
 
 
 # ---------------------------- TAKE EMAIL ------------------------------- #
 
 def get_most_recent_email_address():
+    # try to open the password_data.txt file
     try:
         with open("password_data.txt") as password_file:
+            # get the last line
             for line in password_file:
                 pass
+            # create a list for the last line
             last_line = line.split(" | ")
+            # return the 1st index (email/username entry)
             return last_line[1]
+    # if unable to, return empty string
     except:
         return ""
 
