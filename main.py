@@ -1,5 +1,6 @@
 from tkinter import *
 
+
 # some constants
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
@@ -7,14 +8,23 @@ from tkinter import *
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
 def save_password():
+    # get data to be filled into the file
+
+    website = website_entry.get()
+    email = email_entry.get()
+    password = password_entry.get()
+
+    data = [website, email, password]
+
+    line_to_append = ' | '.join(data)
+
     with open("password_data.txt", "a") as password_file:
-        text = password_file.read()
+        password_file.write(line_to_append + "\n")
 
 
 # ---------------------------- TAKE EMAIL ------------------------------- #
 
 def get_most_recent_email_address():
-
     try:
         with open("password_data.txt") as password_file:
             for line in password_file:
@@ -23,6 +33,7 @@ def get_most_recent_email_address():
             return last_line[1]
     except:
         return ""
+
 
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -48,20 +59,18 @@ email_label.grid(column=0, row=2)
 password_label = Label(text="Password:")
 password_label.grid(column=0, row=3)
 
-
 # Entry
 
-website_text_box = Entry()
-website_text_box.grid(column=1, row=1, columnspan=2, sticky="EW")
-website_text_box.focus()
+website_entry = Entry()
+website_entry.grid(column=1, row=1, columnspan=2, sticky="EW")
+website_entry.focus()
 
-email_text_box = Entry()
-email_text_box.grid(column=1, row=2, columnspan=2, sticky="EW")
-email_text_box.insert(0, get_most_recent_email_address())
+email_entry = Entry()
+email_entry.grid(column=1, row=2, columnspan=2, sticky="EW")
+email_entry.insert(0, get_most_recent_email_address())
 
-password_text_box = Entry()
-password_text_box.grid(column=1, row=3, sticky="EW")
-
+password_entry = Entry()
+password_entry.grid(column=1, row=3, sticky="EW")
 
 # buttons
 
@@ -69,7 +78,7 @@ generate_password_button = Button(text="Generate Password")
 generate_password_button.grid(column=2, row=3, sticky="EW")
 
 add_button = Button(text="Add", width=35)
+add_button.config(command=save_password)
 add_button.grid(column=1, row=4, columnspan=2, sticky="EW")
-
 
 window.mainloop()
