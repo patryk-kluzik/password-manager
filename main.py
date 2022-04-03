@@ -6,6 +6,24 @@ from tkinter import *
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
+def save_password():
+    with open("password_data.txt", "a") as password_file:
+        text = password_file.read()
+
+
+# ---------------------------- TAKE EMAIL ------------------------------- #
+
+def get_most_recent_email_address():
+
+    try:
+        with open("password_data.txt") as password_file:
+            for line in password_file:
+                pass
+            last_line = line.split(" | ")
+            return last_line[1]
+    except:
+        return ""
+
 # ---------------------------- UI SETUP ------------------------------- #
 
 # window
@@ -39,7 +57,7 @@ website_text_box.focus()
 
 email_text_box = Entry()
 email_text_box.grid(column=1, row=2, columnspan=2, sticky="EW")
-email_text_box.insert(0, "patrykkluzik99@gmail.com")
+email_text_box.insert(0, get_most_recent_email_address())
 
 password_text_box = Entry()
 password_text_box.grid(column=1, row=3, sticky="EW")
