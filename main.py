@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 from random import randint, shuffle, choice
+import pyperclip3
 
 
 # some constants
@@ -24,7 +25,10 @@ def generate_password():
     password = letters + numbers + symbols
     shuffle(password)
 
-    password_entry.insert(0, ''.join(password))
+    final_password = ''.join(password)
+
+    password_entry.insert(0, final_password)
+    pyperclip3.copy(final_password)
 
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
@@ -77,6 +81,8 @@ def save_password():
             # open the file and append the new line, create a new line
             with open("password_data.txt", "a") as password_file:
                 password_file.write(line_to_append + "\n")
+
+            pyperclip3.copy(password_entry.get())
 
             # call delete method to clear the entry box
             website_entry.delete(0, END)
