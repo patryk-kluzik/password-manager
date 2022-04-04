@@ -6,8 +6,6 @@ from random import randint, shuffle, choice
 import pyperclip3
 
 
-# some constants
-
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 def generate_password():
@@ -118,6 +116,33 @@ def get_most_recent_email_address():
         return data[website]["email"]
 
 
+# ---------------------------- SEARCH ACCOUNT ------------------------------- #
+
+def search_account():
+    website_to_search = website_entry.get()
+
+    if website_to_search == '':
+        pass
+    else:
+        try:
+            with open("password_data.json", "r") as password_file:
+                data = json.load(password_file)
+        except FileNotFoundError:
+            messagebox.showinfo(title="Error",
+                                message="No data file found. Please add an account first.")
+
+        else:
+            if website_to_search in data:
+                account_data = data[website_to_search]
+                messagebox.showinfo(title=website_to_search,
+                                    message=f"Email: {account_data['email']}\n"
+                                            f"Password : {account_data['password']}")
+                pyperclip3.copy(account_data['password'])
+            else:
+                messagebox.showinfo(title="Error",
+                                    message=f"No account found for '{website_to_search}'.")
+
+
 # ---------------------------- UI SETUP ------------------------------- #
 
 # window
@@ -145,7 +170,7 @@ password_label.grid(column=0, row=3)
 # Entry
 
 website_entry = Entry()
-website_entry.grid(column=1, row=1, columnspan=2, sticky="EW")
+website_entry.grid(column=1, row=1, sticky="EW")
 website_entry.focus()
 
 email_entry = Entry()
@@ -164,5 +189,9 @@ generate_password_button.grid(column=2, row=3, sticky="EW")
 add_button = Button(text="Add", width=35)
 add_button.config(command=save_password)
 add_button.grid(column=1, row=4, columnspan=2, sticky="EW")
+
+search_button = Button(text="Search")
+search_button.config(command=search_account)
+search_button.grid(column=2, row=1, sticky="EW")
 
 window.mainloop()
