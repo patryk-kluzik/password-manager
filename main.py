@@ -1,6 +1,8 @@
+import json
 from tkinter import *
 from tkinter import messagebox
 from random import randint, shuffle, choice
+#  pip install pyperclip3
 import pyperclip3
 
 
@@ -9,7 +11,6 @@ import pyperclip3
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 def generate_password():
-
     password_entry.delete(0, END)
 
     letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q',
@@ -68,22 +69,31 @@ def save_password():
     validated_entries = fields_filled == 3
 
     if validated_entries:
+        # create json format data for website and the login details
+        new_account = {
+            website: {
+                "email": email,
+                "password": password,
+            }
+        }
 
-        # confirm with user entered details
-        is_ok = messagebox.askokcancel(title=website, message=f"Confirm your detail: \n"
-                                                              f"Email: {email}\n"
-                                                              f"Password: {password}")
-
-        # create a string delimited by the pipe symbol
-        line_to_append = ' | '.join(data)
-
-        if is_ok:
-            # open the file and append the new line, create a new line
-            with open("password_data.txt", "a") as password_file:
-                password_file.write(line_to_append + "\n")
-
+        # open the file and append the new line, create a new line
+        try:
+            # try to open the file and read all the data
+            with open("password_data.json", "r") as password_file:
+                data = json.load(password_file)
+        except FileNotFoundError:
+            # if file doesn't exist, make one and add the new record
+            with open("password_data.json", "w") as password_file:
+                json.dump(new_account, password_file, indent=4)
+        else:
+            # if no error, add the new entry to the existing data and write to the file
+            data.update(new_account)
+            with open("password_data.json", "w") as password_file:
+                json.dump(data, password_file, indent=4)
+        finally:
+            # in all instances, add password to clipboard and clear website and password fields
             pyperclip3.copy(password_entry.get())
-
             # call delete method to clear the entry box
             website_entry.delete(0, END)
             password_entry.delete(0, END)
@@ -94,17 +104,18 @@ def save_password():
 def get_most_recent_email_address():
     # try to open the password_data.txt file
     try:
-        with open("password_data.txt") as password_file:
-            # get the last line
-            for line in password_file:
-                pass
-            # create a list for the last line
-            last_line = line.split(" | ")
-            # return the 1st index (email/username entry)
-            return last_line[1]
+        with open("password_data.json", "r") as password_file:
+            # load all the json data
+            data = json.load(password_file)
     # if unable to, return empty string
-    except:
+    except FileNotFoundError:
         return ""
+    else:
+        # loops through all the keys
+        for website in data.keys():
+            pass
+        # for the last key, get the email from the dictionary
+        return data[website]["email"]
 
 
 # ---------------------------- UI SETUP ------------------------------- #
